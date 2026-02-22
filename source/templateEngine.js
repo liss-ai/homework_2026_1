@@ -20,35 +20,29 @@
  * console.log(result); // 'Привет, Иван! Ваш баланс: 1000'
  */
 
-function templateEngine(template, data) {
-    let result = '';
-    let i = 0;
+const templateEngine = (template, data) => {
+    const regex = /\{\{\s*([^}]+)\s*\}\}/g;
     
-    while (i < template.length) {
-        if (template[i] === '{' && template[i + 1] === '{') {
-            i += 2;
-            let path = '';
-            while (i < template.length && !(template[i] === '}' && template[i + 1] === '}')) {
-                path += template[i];
-                i++;
+    return template.replace(regex, (match, path) => {
+        const keys = path.trim().split('.');
+        let value = data;
+        
+        for (const key of keys) {
+            if (value && typeof value === 'object' && key in value) {
+                value = value[key];
+            } else {
+                return '';
             }
-            i += 2; 
-            const keys = path.trim().split('.');
-            let value = data;
-            
-            for (const key of keys) {
-                if (value && typeof value === 'object' && key in value) {
-                    value = value[key];
-                } else {
-                    value = undefined;
-                    break;
-                }
-            }
-            result += value !== undefined ? value : '';
-        } else {
-            result += template[i];
-            i++;
         }
-    }
-    return result;
-}
+        
+        if (value === undefined || value === null) {
+            return '';
+        }
+        
+        if (typeof value === 'object') {
+            return JSON.stringify(value);
+        }
+        
+        return String(value);
+    });
+};
