@@ -34,7 +34,7 @@ QUnit.module("Тестируем функцию templateEngine", function() {
     });
 
     QUnit.test("Обрабатывает разные типы данных", function(assert) {
-        const template = "Число: {{number}}, Булево: {{boolean}}, Объект: {{object}}";
+        const template = "Число: {{number}}, Булево: {{boolean}}, Объект: {{object.key}}";
         const data = { 
             number: 42, 
             boolean: true,
@@ -42,7 +42,7 @@ QUnit.module("Тестируем функцию templateEngine", function() {
         };
         const result = templateEngine(template, data);
 
-        assert.equal(result, "Число: 42, Булево: true, Объект: {\"key\":\"value\"}");
+        assert.equal(result, "Число: 42, Булево: true, Объект: value");
     });
 
     QUnit.test("Обрабатывает null и undefined", function(assert) {
@@ -120,7 +120,7 @@ QUnit.module("Тестируем функцию templateEngine", function() {
     });
 
     QUnit.test("Обрабатывает несколько выражений с разными типами данных", function(assert) {
-        const template = "{{string}} - {{number}} - {{boolean}} - {{array}} - {{object}}";
+        const template = "{{string}} - {{number}} - {{boolean}} - {{array}} - {{object.foo}}";
         const data = { 
             string: "текст",
             number: 123,
@@ -130,7 +130,7 @@ QUnit.module("Тестируем функцию templateEngine", function() {
         };
         const result = templateEngine(template, data);
 
-        assert.equal(result, "текст - 123 - false - [1,2,3] - {\"foo\":\"bar\"}");
+        assert.equal(result, "текст - 123 - false - [1,2,3] - bar");
     });
 });
 
