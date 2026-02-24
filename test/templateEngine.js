@@ -116,7 +116,7 @@ QUnit.module("Тестируем функцию templateEngine", function() {
         const data = { items: [1, 2, 3, 4, 5] };
         const result = templateEngine(template, data);
 
-        assert.equal(result, "Массив: [1,2,3,4,5]");
+        assert.equal(result, "Массив: 1,2,3,4,5");
     });
 
     QUnit.test("Обрабатывает несколько выражений с разными типами данных", function(assert) {
@@ -130,7 +130,35 @@ QUnit.module("Тестируем функцию templateEngine", function() {
         };
         const result = templateEngine(template, data);
 
-        assert.equal(result, "текст - 123 - false - [1,2,3] - bar");
+        assert.equal(result, "текст - 123 - false - 1,2,3 - bar");
+    });
+
+    QUnit.test("Бросает TypeError, если template не строка", function(assert) {
+        const data = { name: "Технопарк" };
+
+        assert.throws(
+            function() {
+                templateEngine(123, data);
+            },
+            TypeError
+        );
+    });
+
+    QUnit.test("Бросает TypeError, если data не объект", function(assert) {
+        const template = "Привет, {{name}}!";
+
+        assert.throws(
+            function() {
+                templateEngine(template, null);
+            },
+            TypeError
+        );
+
+        assert.throws(
+            function() {
+                templateEngine(template, ["Технопарк"]);
+            },
+            TypeError
+        );
     });
 });
-

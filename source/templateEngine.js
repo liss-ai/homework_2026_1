@@ -10,28 +10,19 @@
  * @returns {string} Строка с замененными выражениями. Если значение не найдено, подставляется пустая строка
  */
 const templateEngine = (template, data) => {
+    const isTemplateString = typeof template === 'string' || template instanceof String;
+    const isDataObject = data !== null && typeof data === 'object' && !Array.isArray(data);
+
+    if (!isTemplateString || !isDataObject) {
+        throw new TypeError('Invalid arguments');
+    }
+
     const regex = /\{\{\s*([^}]+)\s*\}\}/g;
-    
-    return template.replace(regex, (match, path) => {
+
+    return String(template).replaceAll(regex, (match, path) => {
         const keys = path.trim().split('.');
-        let value = data;
-        
-        for (const key of keys) {
-            if (value && typeof value === 'object' && key in value) {
-                value = value[key];
-            } else {
-                return '';
-            }
-        }
-        
-        if (value === undefined || value === null) {
-            return '';
-        }
-        
-        if (typeof value === 'object') {
-            return JSON.stringify(value);
-        }
-        
-        return String(value);
+        const value = keys.reduce((acc, key) => acc?.[key], data);
+
+        return value == null ? '' : String(value);
     });
 };
